@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<!-- prettier-ignore-start -->
+<!-- @formatter:off -->
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>SEO Auditor AI Agent - Architecture Diagram</title>
+   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+   <style>
+      * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+      }
+
+      body {
+         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+         background: #dfe5ff;
+         padding: 40px 20px;
+         min-height: 100vh;
+      }
+
+      .container {
+         max-width: 1600px;
+         margin: 0 auto;
+         background: white;
+         border-radius: 20px;
+         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+         overflow: hidden;
+      }
+
+      .header {
+         background: linear-gradient(135deg, #667eea 0%, #012869 50%);
+         /* background: #764ba2; */
+         color: white;
+         padding: 40px;
+         text-align: center;
+      }
+
+      .header h1 {
+         font-size: 3em;
+         margin-bottom: 10px;
+         font-weight: 700;
+      }
+
+      .header p {
+         font-size: 1.2em;
+         opacity: 0.9;
+      }
+
+      .content {
+         padding: 40px;
+      }
+
+      .diagram-section {
+         margin-bottom: 60px;
+         background: #f8f9fa;
+         border-radius: 12px;
+         padding: 30px;
+         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .diagram-section h2 {
+         color: #667eea;
+         margin-bottom: 20px;
+         font-size: 2em;
+         border-bottom: 3px solid #667eea;
+         padding-bottom: 10px;
+      }
+
+      .diagram-section h3 {
+         color: #764ba2;
+         margin: 30px 0 15px 0;
+         font-size: 1.5em;
+      }
+
+      .mermaid {
+         background: white;
+         border-radius: 8px;
+         padding: 20px;
+         margin: 20px 0;
+         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .tech-stack {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+         gap: 20px;
+         margin: 20px 0;
+      }
+
+      .tech-card {
+         background: white;
+         border-radius: 8px;
+         padding: 20px;
+         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .tech-card h4 {
+         color: #667eea;
+         margin-bottom: 10px;
+         font-size: 1.2em;
+      }
+
+      .tech-card ul {
+         list-style: none;
+         padding: 0;
+      }
+
+      .tech-card li {
+         padding: 5px 0;
+         color: #555;
+      }
+
+      .tech-card li:before {
+         content: "→ ";
+         color: #764ba2;
+         font-weight: bold;
+      }
+
+      .footer {
+         text-align: center;
+         padding: 30px;
+         background: #f8f9fa;
+         color: #666;
+         font-size: 0.9em;
+      }
+
+      .controls {
+         position: fixed;
+         top: 20px;
+         right: 20px;
+         z-index: 1000;
+      }
+
+      .btn {
+         background: white;
+         color: #667eea;
+         border: none;
+         padding: 12px 24px;
+         border-radius: 8px;
+         font-weight: 600;
+         cursor: pointer;
+         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+         margin-left: 10px;
+         transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+         transform: translateY(-2px);
+         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      @media print {
+         body {
+            background: white;
+            padding: 0;
+         }
+
+         .controls {
+            display: none;
+         }
+
+         .container {
+            box-shadow: none;
+         }
+      }
+   </style>
+</head>
+
+<body>
+   <div class="controls">
+      <button class="btn" onclick="window.print()">Print/Save as PDF</button>
+   </div>
+
+   <div class="container">
+      <div class="header">
+         <h1>SEO Auditor AI Agent</h1>
+         <p>Complete Architecture & System Design</p>
+      </div>
+
+      <div class="content">
+         <!-- MAIN ARCHITECTURE DIAGRAM -->
+         <div class="diagram-section">
+            <h2>System Architecture Overview</h2>
+            <div class="mermaid">
+graph TB
+    subgraph "Client Layer (Browser)"
+        UI[UI Components]
+        Pages[Next.js Pages]
+        Hooks[Custom Hooks]
+        
+        subgraph "Components"
+            HomePage[Home Page]
+            AuditResults[SEO Audit Results]
+            GitHubDialog[GitHub Integration Dialog]
+            PRCard[PR Result Card]
+            ThemeToggle[Theme Toggle]
+        end
+        
+        subgraph "Custom Hooks"
+            UseAudit[use-website-audit]
+            UseSeoFixes[use-seo-fixes]
+            UseGitHub[use-github-connection]
+            UseGitHubAPI[use-github-api]
+        end
+    end
+    
+    subgraph "API Layer"
+        TRPCClient[tRPC React Client]
+        TRPCServer[tRPC Server]
+        SuperJSON[SuperJSON Transformer]
+        HTTPBatch[HTTP Batch Link]
+    end
+    
+    subgraph "Server Layer (Next.js API Routes)"
+        AppRouter[App Router]
+        
+        subgraph "tRPC Routers"
+            GitHubRouter[GitHub Router]
+            AuditRouter[Website Audit Router]
+            
+            subgraph "GitHub Endpoints"
+                Connection[Connection API]
+                SeoFixes[SEO Fixes API]
+            end
+            
+            subgraph "Audit Endpoints"
+                AnalyzeWebsite[Analyze Website]
+                WebsiteAuditAPI[Website Audit API]
+            end
+        end
+        
+        subgraph "Server Utilities"
+            Prompts[SEO Fix Prompts]
+            OctokitClient[Octokit Client]
+            Crypto[Server Crypto]
+        end
+    end
+    
+    subgraph "External Services"
+        GitHub[GitHub API]
+        AI[AWS Bedrock Reasoning Models]
+    end
+    
+    subgraph "Data Storage"
+        subgraph "State Management (Zustand)"
+            AuditStore[Audit Store]
+            GitHubStore[GitHub Store]
+            PRStore[PR Store]
+        end
+        
+        LocalStorage[Browser LocalStorage<br/>Persisted State]
+        ClientCrypto[Client-Side Encryption<br/>GitHub Tokens]
+    end
+    
+    HomePage --> UseAudit
+    HomePage --> UseGitHub
+    
+    AuditResults --> UseSeoFixes
+    GitHubDialog --> UseGitHubAPI
+    GitHubDialog --> UseGitHub
+    
+    UseAudit --> AuditStore
+    UseSeoFixes --> GitHubStore
+    UseSeoFixes --> PRStore
+    UseGitHub --> GitHubStore
+    UseGitHubAPI --> GitHubStore
+    
+    UseAudit --> TRPCClient
+    UseSeoFixes --> TRPCClient
+    UseGitHub --> TRPCClient
+    UseGitHubAPI --> TRPCClient
+    
+    AuditStore --> LocalStorage
+    GitHubStore --> LocalStorage
+    PRStore --> LocalStorage
+    
+    GitHubStore --> ClientCrypto
+    
+    TRPCClient --> HTTPBatch
+    HTTPBatch --> SuperJSON
+    SuperJSON --> TRPCServer
+    TRPCServer --> AppRouter
+    
+    AppRouter --> GitHubRouter
+    AppRouter --> AuditRouter
+    
+    GitHubRouter --> Connection
+    GitHubRouter --> SeoFixes
+    
+    AuditRouter --> AnalyzeWebsite
+    
+    Connection --> OctokitClient
+    SeoFixes --> OctokitClient
+    SeoFixes --> Prompts
+    SeoFixes --> AI
+    
+    OctokitClient --> GitHub
+    AnalyzeWebsite --> WebsiteAuditAPI
+    
+    
+    classDef clientClass fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef apiClass fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef serverClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef externalClass fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef storageClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class UI,Pages,Hooks,HomePage,AuditResults,GitHubDialog,PRCard,ThemeToggle,UseAudit,UseSeoFixes,UseGitHub,UseGitHubAPI clientClass
+    class TRPCClient,TRPCServer,SuperJSON,HTTPBatch apiClass
+    class AppRouter,GitHubRouter,AuditRouter,Connection,SeoFixes,AnalyzeWebsite,WebsiteAuditAPI,Prompts,OctokitClient,Crypto serverClass
+    class GitHub,AI externalClass
+    class AuditStore,GitHubStore,PRStore,LocalStorage,ClientCrypto storageClass
+            </div>
+         </div>
+
+         <!-- DATA FLOW DIAGRAMS -->
+         <div class="diagram-section">
+            <h2>Data Flow Diagrams</h2>
+
+            <h3>1. Website Audit Flow</h3>
+            <div class="mermaid">
+               sequenceDiagram
+               actor User
+               participant UI as Home Page
+               participant Hook as use-website-audit
+               participant Store as Audit Store
+               participant tRPC as tRPC Client
+               participant Server as Audit Router
+
+               User->>UI: Enter website URL
+               User->>UI: Click "Audit Website"
+               UI->>Hook: analyzeWebsite(url)
+               Hook->>Store: setWebsiteUrl(url)
+               Hook->>tRPC: audit.analyze.mutate()
+               tRPC->>Server: POST /api/trpc
+               Server->>WebsiteAuditAPI: Fetch & analyze website
+               WebsiteAuditAPI-->>Server: SEO audit data
+               Server-->>tRPC: Audit results
+               tRPC-->>Hook: Transformed data
+               Hook->>Store: setCurrentAnalysis()
+               Hook-->>UI: Return results
+               UI->>User: Display audit results
+            </div>
+
+            <h3>2. GitHub Integration & SEO Fix Flow</h3>
+            <div class="mermaid">
+               sequenceDiagram
+               actor User
+               participant UI as GitHub Dialog
+               participant Hook as use-seo-fixes
+               participant GHStore as GitHub Store
+               participant Crypto as Client Crypto
+               participant tRPC as tRPC Client
+               participant Server as GitHub Router
+               participant AI as AI Service
+               participant Octokit as Octokit Client
+               participant GitHub as GitHub API
+
+               User->>UI: Click "Auto Fix"
+               UI->>UI: Open GitHub Dialog
+               User->>UI: Enter GitHub token
+               UI->>Crypto: encryptData(token)
+               Crypto-->>UI: Encrypted token
+               UI->>GHStore: setAccessToken()
+               User->>UI: Select repository
+               User->>UI: Select branch
+               User->>UI: Select files
+               User->>UI: Click "Create PR"
+               UI->>Hook: applySeoFixes()
+               Hook->>GHStore: getAccessToken()
+               GHStore->>Crypto: decryptData()
+               Crypto-->>Hook: Decrypted token
+               Hook->>tRPC: github.applySeoFixes.mutate()
+               tRPC->>Server: POST /api/trpc
+               Server->>Octokit: getFileTree()
+               Octokit->>GitHub: git.getTree()
+               GitHub-->>Octokit: File tree
+               Server->>Octokit: getFileContent()
+               Octokit->>GitHub: repos.getContent()
+               GitHub-->>Server: File contents
+               Server->>AI: Generate SEO fixes
+               AI-->>Server: Fixed code
+               Server->>Octokit: createBranch()
+               Octokit->>GitHub: git.createRef()
+               Server->>Octokit: updateFileContent()
+               Octokit->>GitHub: repos.createOrUpdateFileContents()
+               Server->>Octokit: createPullRequest()
+               Octokit->>GitHub: pulls.create()
+               GitHub-->>Server: PR details
+               Server-->>Hook: PR result
+               Hook->>PRStore: setLatestPR()
+               Hook-->>UI: Success
+               UI->>User: Show PR card with link
+            </div>
+
+            <h3>3. State Management Flow</h3>
+            <div class="mermaid">
+graph LR
+    subgraph "Zustand Stores"
+        A[Audit Store]
+        G[GitHub Store]
+        P[PR Store]
+    end
+    
+    subgraph "Persisted Storage"
+        LS1[audit-storage]
+        LS2[github-integration-storage]
+        LS3[pr-storage]
+    end
+    
+    subgraph "Encryption Layer"
+        Enc[Client Crypto<br/>Web Crypto API]
+    end
+    
+    A <-->|persist| LS1
+    G <-->|persist| LS2
+    P <-->|persist| LS3
+    
+    G <--> Enc
+    
+    LS1 --> Browser[Browser LocalStorage]
+    LS2 --> Browser
+    LS3 --> Browser
+            </div>
+         </div>
+
+         <!-- TECHNOLOGY STACK -->
+         <div class="diagram-section">
+            <h2>Tech Stack</h2>
+            <div class="tech-stack">
+               <div class="tech-card">
+                  <h4>Frontend</h4>
+                  <ul>
+                     <li>Next.js 15+ (App Router)</li>
+                     <li>React 19+</li>
+                     <li>TypeScript</li>
+                     <li>Tailwind CSS</li>
+                     <li>Radix UI</li>
+                     <li>Zustand (State)</li>
+                     <li>Lucide and Hugeicons React</li>
+                  </ul>
+               </div>
+
+               <div class="tech-card">
+                  <h4>API Layer</h4>
+                  <ul>
+                     <li>tRPC</li>
+                     <li>Zod</li>
+                     <li>TanStack Query</li>
+                  </ul>
+               </div>
+
+               <div class="tech-card">
+                  <h4>Backend</h4>
+                  <ul>
+                     <li>Next.js API Routes</li>
+                     <li>Node.js</li>
+                     <li>Octokit (GitHub)</li>
+                     <li>Amazon Bedrock Reasoning Models</li>
+                     <li>Vercel AI Gateway</li>
+                     <li>Website Audit API</li>
+                  </ul>
+               </div>
+
+               <div class="tech-card">
+                  <h4>Security</h4>
+                  <ul>
+                     <li>Web Crypto API</li>
+                     <li>Client-side Encryption</li>
+                     <li>Secure LocalStorage</li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+
+         <!-- DEPLOYMENT ARCHITECTURE -->
+         <div class="diagram-section">
+            <h2>Deployment Architecture</h2>
+            <div class="mermaid">
+graph TB
+    subgraph "Production Environment"
+        CDN[CDN/Edge Network]
+        NextApp[Next.js Application<br/>Vercel/Node.js]
+        tRPC[tRPC Server]
+        
+        subgraph "Static Assets"
+            HTML[HTML/CSS/JS]
+            Images[Images]
+        end
+    end
+    
+    subgraph "External APIs"
+        GitHubAPI[GitHub API]
+        AI[Vercel AI Gateway/Amazon Bedrock Reasoning Models]
+    end
+    
+    User[Users] --> CDN
+    CDN --> HTML
+    CDN --> Images
+    CDN --> NextApp
+    NextApp --> GitHubAPI
+    NextApp --> AI
+            </div>
+         </div>
+
+         <!-- KEY FEATURES -->
+         <div class="diagram-section">
+            <h2>Key Features</h2>
+            <div class="tech-stack">
+               <div class="tech-card">
+                  <h4>SEO Auditing</h4>
+                  <ul>
+                     <li>50+ SEO factors analysis</li>
+                     <li>Meta tags validation</li>
+                     <li>Image alt text checking</li>
+                     <li>Plaintext email obsfucation</li>
+                     <li>Mobile usability</li>
+                     <li>Cross-origin link safety</li>
+                     <li>Keyword analysis</li>
+                     <li>Canonical URL validation</li>
+                  </ul>
+               </div>
+
+               <div class="tech-card">
+                  <h4>AI-Powered Fixes</h4>
+                  <ul>
+                     <li>Automatic SEO issues fixing in code</li>
+                     <li>Context-aware prompts</li>
+                     <li>Multi-file support</li>
+                     <li>Branch-based workflow</li>
+                     <li>Real-time progress</li>
+                  </ul>
+               </div>
+
+               <div class="tech-card">
+                  <h4>GitHub Integration</h4>
+                  <ul>
+                     <li>Token authentication</li>
+                     <li>Repository browsing</li>
+                     <li>Branch selection</li>
+                     <li>Auto/manual file selection</li>
+                     <li>PR creation</li>
+                     <li>Secure token storage</li>
+                  </ul>
+               </div>
+
+               <div class="tech-card">
+                  <h4>User Experience</h4>
+                  <ul>
+                     <li>Progress tracking</li>
+                     <li>Dark/light theme</li>
+                     <li>Responsive design</li>
+                     <li>Toast notifications</li>
+                     <li>Persistent state</li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="footer">
+         <p>Architecture Diagram v1.0 Created: October 20, 2025</p>
+         <p>SEO Auditor AI Agent - Built with Next.js, TypeScript, tRPC, and AWS Bedrock</p>
+      </div>
+   </div>
+
+   <script>
+      mermaid.initialize({
+         startOnLoad: true,
+         theme: 'default',
+         themeVariables: {
+            primaryColor: '#e1f5ff',
+            primaryTextColor: '#01579b',
+            primaryBorderColor: '#01579b',
+            lineColor: '#666',
+            secondaryColor: '#fff3e0',
+            tertiaryColor: '#f3e5f5'
+         },
+         flowchart: {
+            curve: 'basis',
+            padding: 20
+         },
+         sequence: {
+            actorMargin: 50,
+            width: 150,
+            height: 65,
+            boxMargin: 10
+         }
+      });
+    </script>
+</body>
+
+</html>
+<!-- @formatter:on -->
+<!-- prettier-ignore-end -->

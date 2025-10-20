@@ -15,8 +15,10 @@ import { useGitHubConnection } from '@/hooks/use-github-connection';
 import { useGitHubApi } from '@/hooks/use-github-api';
 import { useSeoFixes } from '@/hooks/use-seo-fixes';
 import type { TransformedWebsiteAuditResponse } from '@/lib/types/website-audit';
+import type { GitHubRepository } from '@/app/_components/github/github-repository-selector';
 import { toast } from 'sonner';
 import { Zap, Github } from 'lucide-react';
+import { SeoFixProgressOverlay } from './seo-fix-progress-overlay';
 
 interface GitHubIntegrationDialogProps {
    open: boolean;
@@ -31,7 +33,7 @@ export function GitHubIntegrationDialog({
    websiteUrl,
    auditData,
 }: GitHubIntegrationDialogProps) {
-   const [selectedRepository, setSelectedRepository] = useState<any>(null);
+   const [selectedRepository, setSelectedRepository] = useState<GitHubRepository | null>(null);
    const [selectedBranch, setSelectedBranch] = useState<string>('');
    const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
    const [autoSelectFiles, setAutoSelectFiles] = useState(true);
@@ -51,11 +53,17 @@ export function GitHubIntegrationDialog({
       const metaDescIssue = issues.find((i) => i.title.toLowerCase().includes('meta description') || i.title.toLowerCase().includes('description tag'));
       const imageAltIssue = issues.find((i) => i.title.toLowerCase().includes('image') && i.title.toLowerCase().includes('alt'));
       const unsafeLinksIssue = securityIssues.find((i: { title: string }) => i.title.toLowerCase().includes('unsafe') && i.title.toLowerCase().includes('cross origin'));
+      const plaintextEmailsIssue = securityIssues.find((i: { title: string }) => i.title.toLowerCase().includes('plaintext') && i.title.toLowerCase().includes('email'));
+      const canonicalUrlIssue = securityIssues.find((i: { title: string }) => i.title.toLowerCase().includes('canonical') || i.title.toLowerCase().includes('url canonicalization'));
+      const keywordUsageIssue = issues.find((i) => i.title.toLowerCase().includes('keyword usage'));
 
       console.log('[GitHub Integration] Meta Title Issue:', metaTitleIssue);
       console.log('[GitHub Integration] Meta Desc Issue:', metaDescIssue);
       console.log('[GitHub Integration] Image Alt Issue:', imageAltIssue);
       console.log('[GitHub Integration] Unsafe Links Issue:', unsafeLinksIssue);
+      console.log('[GitHub Integration] Plaintext Emails Issue:', plaintextEmailsIssue);
+      console.log('[GitHub Integration] Canonical URL Issue:', canonicalUrlIssue);
+      console.log('[GitHub Integration] Keyword Usage Issue:', keywordUsageIssue);
 
       const transformed = {
          metaTitle: metaTitleIssue ? {
@@ -79,6 +87,23 @@ export function GitHubIntegrationDialog({
             recommendation: unsafeLinksIssue.recommendation || unsafeLinksIssue.statusText || '',
             status: unsafeLinksIssue.status || '',
          } : undefined,
+         plaintextEmails: plaintextEmailsIssue && 'moreDetails' in plaintextEmailsIssue ? {
+            totalEmails: (plaintextEmailsIssue.moreDetails as { totalEmails?: number })?.totalEmails || 0,
+            plaintextEmails: (plaintextEmailsIssue.moreDetails as { plaintextEmails?: number })?.plaintextEmails || 0,
+            complianceRate: (plaintextEmailsIssue.moreDetails as { complianceRate?: number })?.complianceRate || 0,
+            recommendation: plaintextEmailsIssue.recommendation || plaintextEmailsIssue.statusText || '',
+            status: plaintextEmailsIssue.status || '',
+         } : undefined,
+         canonicalUrl: canonicalUrlIssue && 'moreDetails' in canonicalUrlIssue ? {
+            canonicalUrl: (canonicalUrlIssue.moreDetails as { canonicalUrl?: string })?.canonicalUrl || '',
+            status: canonicalUrlIssue.status || '',
+            recommendation: canonicalUrlIssue.recommendation || canonicalUrlIssue.statusText || '',
+         } : undefined,
+         keywordUsage: keywordUsageIssue && 'moreDetails' in keywordUsageIssue ? {
+            keywords: (keywordUsageIssue.moreDetails as { keywords?: Record<string, { inTitle: boolean; inMetaDescription: boolean; inHeadings: boolean; }> })?.keywords || {},
+            status: keywordUsageIssue.status || '',
+            recommendation: keywordUsageIssue.recommendation || keywordUsageIssue.statusText || '',
+         } : undefined,
       };
 
       console.log('[GitHub Integration] Transformed SEO Issues:', transformed);
@@ -89,19 +114,13 @@ export function GitHubIntegrationDialog({
    const { isConnected, handleConnect, isConnecting } = useGitHubConnection();
    const {
       repositories,
-      branches,
-      files,
-      getRepositories,
       getBranches,
-      getFiles,
       selectRepository,
       selectBranch,
       selectFiles,
       isLoadingRepositories,
-      isLoadingBranches,
-      isLoadingFiles,
    } = useGitHubApi();
-   const { applySeoFixes, isFixing, progress: fixProgress } = useSeoFixes();
+   const { applySeoFixes, isFixing, progress: fixProgress, progressSteps, currentIssues } = useSeoFixes();
 
    useEffect(() => {
       if (open && isConnected) {
@@ -109,26 +128,33 @@ export function GitHubIntegrationDialog({
       }
    }, [open, isConnected]);
 
-   const handleRepositorySelect = async (repo: any) => {
+   const handleRepositorySelect = async (repo: GitHubRepository) => {
       setSelectedRepository(repo);
-      selectRepository(repo);
+      const storeRepo = {
+         id: repo.id,
+         name: repo.name,
+         full_name: repo.full_name,
+         private: repo.private,
+         html_url: repo.html_url,
+         default_branch: repo.default_branch || 'main'
+      };
+      selectRepository(storeRepo);
 
-      // Auto-select default branch and fetch branches
+      // auto-select default branch and fetch branches
       if (repo.default_branch) {
          setSelectedBranch(repo.default_branch);
          selectBranch(repo.default_branch);
          const [owner] = repo.full_name.split('/');
          await getBranches(owner, repo.name);
+      } else {
+         // using main as fallback (worst case scenario)
+         setSelectedBranch('main');
+         selectBranch('main');
+         const [owner] = repo.full_name.split('/');
+         await getBranches(owner, repo.name);
       }
    };
 
-   const handleBranchSelect = async (branchName: string) => {
-      setSelectedBranch(branchName);
-      if (selectedRepository) {
-         const [owner, repo] = selectedRepository.full_name.split('/');
-         await getFiles(owner, repo, branchName);
-      }
-   };
 
    const handleFileManagerSave = (branch: string, files: string[], autoSelect: boolean) => {
       setSelectedBranch(branch);
@@ -245,10 +271,7 @@ export function GitHubIntegrationDialog({
                   </DialogDescription>
                </DialogHeader>
 
-               {/* TODO: Add a loading overlay while applying fixes */}
-
                <div className="space-y-6">
-                  {/* Repository Selection */}
                   <div className="space-y-2">
                      <label className="text-sm font-medium">Repository</label>
                      <GitHubRepositorySelector
@@ -273,7 +296,7 @@ export function GitHubIntegrationDialog({
                            >
                               {autoSelectFiles
                                  ? 'Select Files & Branch'
-                                 : `${selectedFiles.length} files selected (Branch: ${selectedBranch})`
+                                 : `${selectedFiles.length} files selected`
                               }
                            </Button>
                         </div>
@@ -289,7 +312,7 @@ export function GitHubIntegrationDialog({
                      {isFixing ? (
                         <>
                            <Zap className="mr-2 h-4 w-4 animate-spin" />
-                           {fixProgress}
+                           Applying Fixes...
                         </>
                      ) : !selectedRepository ? (
                         <>
@@ -312,7 +335,6 @@ export function GitHubIntegrationDialog({
             </DialogContent>
          </Dialog>
 
-         {/* File Manager Dialog */}
          {selectedRepository && (
             <GitHubFileManagerDialog
                open={showFileManager}
@@ -325,6 +347,13 @@ export function GitHubIntegrationDialog({
                isSaving={isFixing}
             />
          )}
+
+         <SeoFixProgressOverlay
+            isOpen={isFixing}
+            currentStep={fixProgress}
+            steps={progressSteps}
+            issues={currentIssues}
+         />
       </>
    );
 }

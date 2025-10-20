@@ -84,7 +84,7 @@ export function PRResultCard() {
                         <GitPullRequest className="h-4 w-4" />
                         <span className="hidden sm:inline">View Pull Request #{latestPR.pullRequestNumber}</span>
                         <span className="sm:hidden">View PR #{latestPR.pullRequestNumber}</span>
-                        <ExternalLink className="h-3 w-3" />
+                        <ExternalLink className="size-2" />
                      </Button>
 
                      <Button

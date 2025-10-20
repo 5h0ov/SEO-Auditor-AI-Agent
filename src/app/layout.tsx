@@ -8,8 +8,11 @@ import { ThemeProvider } from '@/components/theme-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'GitHub SEO Auto-Fix AI Agent',
-  description: 'Automatically fix SEO issues via GitHub pull requests',
+  title: 'SEO Auditor AI Agent',
+  description: 'Audit SEO of your website and automatically fix SEO issues via GitHub pull requests to your repository. Make your website more SEO Friendly on auto-pilot!',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

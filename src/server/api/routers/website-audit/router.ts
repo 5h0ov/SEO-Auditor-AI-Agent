@@ -317,13 +317,9 @@ export async function runWebsiteAuditAnalysis(
 }
 
 /**
- * Website Audit Router - Standalone version
- * No auth, no database - just analysis
+ * Website Audit Router
  */
 export const websiteAuditRouter = createTRPCRouter({
-  /**
-   * Analyze website SEO
-   */
   analyzeWebsite: publicProcedure
     .input(
       z.object({
@@ -333,7 +329,6 @@ export const websiteAuditRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const { url } = input;
 
-      // Validate URL
       if (!validateUrl(url)) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
@@ -344,10 +339,8 @@ export const websiteAuditRouter = createTRPCRouter({
       console.log('[Website Audit] Starting analysis for:', url);
 
       try {
-        // Run analysis
         const analysisResult = await runWebsiteAuditAnalysis(url);
 
-        // Transform to frontend format
         const transformedData = transformWebsiteAuditData(analysisResult);
 
         console.log('[Website Audit] Analysis complete:', {
