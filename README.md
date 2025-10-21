@@ -2,8 +2,8 @@
 
 An autonomous AI agent that analyzes websites for SEO issues and automatically generates fixes via GitHub pull requests. Built with Next.js, TypeScript, tRPC and Amazon Bedrock Reasoning Models for intelligent SEO optimization.
 
-Demo Video: https://youtu.be/4qP-1-TqWoo
-Live URL: https://seo-auditor-ai-agent.vercel.app
+- Demo Video: https://youtu.be/4qP-1-TqWoo
+- Live URL: https://seo-auditor-ai-agent.vercel.app
 
 ## Features
 
